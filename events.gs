@@ -65,10 +65,13 @@ function check_for_submit()
     [sheet, _, _] =  get_resources()
     // Is the edit from the checkbox, if so, see what its state is.
     checkbox = sheet.getRange("H1")
+    status = sheet.getRange("I1")
     if(checkbox.isChecked())
     {
-        main()
-        checkbox.uncheck()
+        status.setValue("Saving...");
+        main();
+        checkbox.uncheck();
+        status.setValue("");
     }
     else
       print('Not the checkbox, okay to ignore this edit!')
@@ -86,8 +89,8 @@ function send_notifications()
   today.setHours(0,0,0,0)
 
 
-  var [spreadsheet, _] = get_resources()
-  var [emails, _] = get_emails(spreadsheet, false)
+  var [spreadsheet, configuration, _] = get_resources()
+  var [emails, _] = get_emails(configuration, false)
   var dates = spreadsheet.getRange(3, 1, spreadsheet.getLastRow()-2, 1).getValues();
   var water_signups = spreadsheet.getRange(3, 2, spreadsheet.getLastRow()-2, 1).getValues();
   var weigh_signups = spreadsheet.getRange(3, 3, spreadsheet.getLastRow()-2, 1).getValues();
@@ -169,6 +172,7 @@ function check_that_watering_is_done()
         send_watering_alert(configuration); 
       }
       else
+        print("Mice were watered today!")
         continue
     }
     else
